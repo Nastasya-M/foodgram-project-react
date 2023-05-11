@@ -147,10 +147,10 @@ DJOSER = {
         'user_list': ['rest_framework.permissions.AllowAny'],
     },
     'SERIALIZERS': {
-        'user': 'api.serializers.CustomUserSerializer',
-        'current_user': 'api.serializers.CustomUserSerializer',
+        'user': 'users.serializers.CustomUserSerializer',
+        'current_user': 'users.serializers.CustomUserSerializer',
+        'user_create': 'users.serializers.CustomUserCreateSerializer',
     },
-    
 }
 
 MAX_LENGHT_EMAIL = 254
