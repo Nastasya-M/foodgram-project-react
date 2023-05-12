@@ -124,7 +124,7 @@ class AddRecipeSerializer(serializers.ModelSerializer):
         def validate_cooking_time(self, data):
             if data <= 0:
                 raise serializers.ValidationError(
-                        'Время приготовления должно быть больше 0!')
+                    'Время приготовления должно быть больше 0!')
             return data
 
         def validate_tags(self, data):
