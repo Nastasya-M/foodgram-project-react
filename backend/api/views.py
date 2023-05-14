@@ -60,7 +60,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
             return Response(
                 serializer.to_representation(instance=model_create),
                 status=status.HTTP_201_CREATED
-            )
+        )
 
     @staticmethod
     def favorite_and_shopping_cart_delete(model, user, recipe):
