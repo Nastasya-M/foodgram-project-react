@@ -6,9 +6,14 @@ User = get_user_model()
 
 
 class Ingredient(models.Model):
-    name = models.CharField(max_length=200, verbose_name='Ингридиент')
+    name = models.CharField(
+        max_length=200,
+        verbose_name='Ингридиент'
+    )
     measurement_unit = models.CharField(
-        max_length=200, verbose_name='Единицы измерения')
+        max_length=200,
+        verbose_name='Единицы измерения'
+    )
 
     class Meta:
         ordering = ('name',)
@@ -20,10 +25,34 @@ class Ingredient(models.Model):
 
 
 class Tag(models.Model):
+    ORANGE = '#FFA500'
+    GREEN = '#008000'
+    YELLOW = '#FFFF00'
+    BLUE = '#0000FF'
+
+    COLOR_CHOICES = [
+        (ORANGE, 'Оранжевый'),
+        (GREEN, 'Зеленый'),
+        (YELLOW, 'Желтый'),
+        (BLUE, 'Синий'),
+    ]
     name = models.CharField(
-        max_length=200, unique=True, verbose_name='Название тэга')
-    color = models.CharField(max_length=7, unique=True, verbose_name='Цвет')
-    slug = models.SlugField(max_length=200, unique=True, verbose_name='Слаг')
+        max_length=200,
+        unique=True,
+        verbose_name='Название тэга'
+    )
+    color = models.CharField(
+        max_length=7,
+        unique=True,
+        choices=COLOR_CHOICES,
+        default=BLUE,
+        verbose_name='Цвет'
+    )
+    slug = models.SlugField(
+        max_length=200,
+        unique=True,
+        verbose_name='Слаг'
+    )
 
     class Meta:
         ordering = ('name',)
@@ -35,7 +64,10 @@ class Tag(models.Model):
 
 
 class Recipe(models.Model):
-    name = models.CharField(max_length=200, verbose_name='Название')
+    name = models.CharField(
+        max_length=200,
+        verbose_name='Название'
+    )
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
@@ -43,16 +75,25 @@ class Recipe(models.Model):
         verbose_name='Автор',
     )
     tags = models.ManyToManyField(
-        Tag, related_name='recipes', verbose_name='Тэги')
+        Tag,
+        related_name='recipes',
+        verbose_name='Тэги')
     ingredients = models.ManyToManyField(
         'Ingredient',
         through='IngredientInRecipe',
         verbose_name='Ингридиенты в рецепте'
     )
     pub_date = models.DateTimeField(
-        auto_now_add=True, db_index=True, verbose_name='Дата')
+        auto_now_add=True,
+        db_index=True,
+        verbose_name='Дата'
+    )
     image = models.ImageField(
-        upload_to='recipes/', null=True, blank=True, verbose_name='Картинка')
+        upload_to='recipes/',
+        null=True,
+        blank=True,
+        verbose_name='Картинка'
+    )
     text = models.TextField(
         verbose_name='Описание',
     )

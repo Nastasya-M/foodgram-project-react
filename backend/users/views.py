@@ -1,10 +1,10 @@
-from djoser.views import UserViewSet
 from django.shortcuts import get_object_or_404
-from rest_framework.response import Response
-from rest_framework.generics import ListAPIView
+from djoser.views import UserViewSet
 from rest_framework import status, views
-from rest_framework.permissions import (
-    IsAuthenticated, IsAuthenticatedOrReadOnly)
+from rest_framework.generics import ListAPIView
+from rest_framework.permissions import (IsAuthenticated,
+                                        IsAuthenticatedOrReadOnly)
+from rest_framework.response import Response
 
 from api.pagination import CustomPagination
 from users.models import Subscription, User

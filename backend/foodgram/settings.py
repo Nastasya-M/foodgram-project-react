@@ -1,8 +1,7 @@
 import os
+from pathlib import Path
 
 from dotenv import load_dotenv
-
-from pathlib import Path
 
 load_dotenv()
 
@@ -17,7 +16,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-+h61k92hl0kqgmkgxbzb%6mxah%x2&qzk7$mwqne*6#pt=(21g'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
@@ -141,10 +140,9 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
     ],
-
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',
-    ]
+    ],
 }
 
 DJOSER = {
