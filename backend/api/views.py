@@ -57,9 +57,9 @@ class RecipeViewSet(viewsets.ModelViewSet):
                 serializer = FavoriteSerializer()
             else:
                 serializer = ShoppingCartSerializer()
-            return Response(
-                serializer.to_representation(instance=model_create),
-                status=status.HTTP_201_CREATED
+        return Response(
+            serializer.to_representation(instance=model_create),
+            status=status.HTTP_201_CREATED
         )
 
     @staticmethod
