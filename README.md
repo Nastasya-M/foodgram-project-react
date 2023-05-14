@@ -1,6 +1,6 @@
 # praktikum_new_diplom
 
-[workflow]
+[![Foodgram workflow](https://github.com/Nastasya-M/foodgram-project-react/actions/workflows/foodgram_workflow.yml/badge.svg)](https://github.com/Nastasya-M/foodgram-project-react/actions/workflows/foodgram_workflow.yml)
 
 ### foodgram - это сервис, с помощбю которого пользователи смогут публиковать рецепты, подписываться на публикации других пользователей, добавлять понравившиеся рецепты в список «Избранное», а перед походом в магазин скачивать сводный список продуктов, необходимых для приготовления одного или нескольких выбранных блюд. 
 ```
