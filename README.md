@@ -18,10 +18,6 @@ GitHub Actions
 Postgres
 ```
 
-### Ссылка на документацию:
-
-[Redoc](https://51.250.73.9/api/docs/redoc.html)
-
 ### Как запустить проект:
 Клонировать репозиторий:
 ```
@@ -84,3 +80,5 @@ sudo docker-compose exec web python manage.py createsuperuser # создайте
 [Admin](http://51.250.73.9/admin/login/?next=/admin/)
 
 [Api](http://51.250.73.9/api/)
+
+[Foodgram] (http://51.250.73.9/recipes)
