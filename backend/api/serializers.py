@@ -1,4 +1,5 @@
 from drf_extra_fields.fields import Base64ImageField
+from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 
 from recipes.models import (Favorite, Ingredient, IngredientInRecipe, Recipe,
@@ -88,22 +89,19 @@ class AddRecipeSerializer(serializers.ModelSerializer):
                   'name', 'text', 'cooking_time', 'image')
 
     def validate_ingredients(self, data):
-        ingredients = self.initial_data.get('ingredients')
-        for ingredient in ingredients:
-            if int(ingredient['amount']) <= 0:
+        if not data:
+            raise serializers.ValidationError(
+                'Поле ингредиентов не может быть пустым!')
+        ingredients_list = []
+        for item in data:
+            ingredient = get_object_or_404(Ingredient, name=item['id'])
+            if ingredient in ingredients_list:
                 raise serializers.ValidationError(
-                    'Поле ингредиентов не может быть пустым!')
-            ingredients_list = []
-            for ingredient in ingredients:
-                ingredient_id = ingredient['id']
-                if ingredient_id in ingredients_list:
-                    raise serializers.ValidationError(
-                        'В рецепте не может быть повторяющихся ингредиентов')
-                ingredients_list.append(ingredient_id)
-                amount = ingredient['amount']
-                if int(amount) <= 0:
-                    raise serializers.ValidationError(
-                        'Число игредиентов должно быть больше 0')
+                    'В рецепте не может быть повторяющихся ингредиентов')
+            if int(item['amount']) <= 0:
+                raise serializers.ValidationError(
+                    'Число игредиентов должно быть больше 0')
+            ingredients_list.append(ingredient)
         return data
 
     def validate_cooking_time(self, data):
