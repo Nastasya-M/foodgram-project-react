@@ -9,7 +9,7 @@ services:
       - ./.env
   
   web:
-    image: nastasyam/backend:v1
+    image: nastasyam/backend:v2
     restart: always
     volumes:
       - static_value:/app/static/
