@@ -87,13 +87,6 @@ class AddRecipeSerializer(serializers.ModelSerializer):
         model = Recipe
         fields = ('id', 'ingredients', 'tags', 'author',
                   'name', 'text', 'cooking_time', 'image')
-        validators = [
-            serializers.UniqueTogetherValidator(
-                queryset=Recipe.objects.all(),
-                fields=('name', 'text'),
-                message='Такой рецепт уже существует'
-            )
-        ]
 
     def validate_ingredients(self, data):
         ingredients = self.initial_data.get('ingredients')
