@@ -47,7 +47,7 @@ class RecipeSerializer(serializers.ModelSerializer):
     author = CustomUserSerializer(read_only=True)
     image = Base64ImageField()
     ingredients = IngredientInRecipeSerializer(
-        source='ingredient_recipe', 
+        source='ingredient_recipe',
         many=True,
         read_only=True,)
     tags = TagSerializer(read_only=True, many=True)
@@ -178,11 +178,10 @@ class FavoriteSerializer(serializers.ModelSerializer):
 
 
 class ShoppingCartSerializer(serializers.ModelSerializer):
-    id = serializers.CharField(read_only=True, source='recipe.id')
-    cooking_time = serializers.CharField(read_only=True,
+    cooking_time = serializers.IntegerField(read_only=True,
                                          source='recipe.cooking_time')
     name = serializers.CharField(read_only=True, source='recipe.name')
-    image = serializers.CharField(read_only=True, source='recipe.image')
+    image = serializers.ImageField(read_only=True, source='recipe.image')
 
     class Meta:
         model = ShoppingСart
