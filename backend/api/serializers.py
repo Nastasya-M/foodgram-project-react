@@ -179,7 +179,7 @@ class FavoriteSerializer(serializers.ModelSerializer):
 
 class ShoppingCartSerializer(serializers.ModelSerializer):
     cooking_time = serializers.IntegerField(read_only=True,
-                                         source='recipe.cooking_time')
+                                            source='recipe.cooking_time')
     name = serializers.CharField(read_only=True, source='recipe.name')
     image = serializers.ImageField(read_only=True, source='recipe.image')
 
