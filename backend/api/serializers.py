@@ -49,7 +49,7 @@ class RecipeSerializer(serializers.ModelSerializer):
     author = CustomUserSerializer(read_only=True)
     image = Base64ImageField()
     ingredients = IngredientInRecipeSerializer(
-        source='ingredients_recipe',
+        source='ingredient_recipe',
         many=True,
         read_only=True,)
     is_favorited = serializers.SerializerMethodField()
@@ -112,7 +112,7 @@ class AddRecipeSerializer(serializers.ModelSerializer):
     def create_ingredients(ingredients, recipe):
         ingredient_list = [
             IngredientInRecipe(
-                ingredient=ingredient.get('id'),
+                ingredient=ingredient['id'],
                 recipe=recipe,
                 amount=ingredient['amount'],
             )
