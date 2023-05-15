@@ -80,7 +80,6 @@ class AddRecipeSerializer(serializers.ModelSerializer):
                                               many=True)
     image = Base64ImageField()
     author = CustomUserSerializer(read_only=True)
-    name = serializers.CharField(max_length=200)
     cooking_time = serializers.IntegerField()
 
     class Meta:
