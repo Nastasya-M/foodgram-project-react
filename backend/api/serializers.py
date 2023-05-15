@@ -92,7 +92,18 @@ class AddRecipeSerializer(serializers.ModelSerializer):
         for ingredient in ingredients:
             if int(ingredient['amount']) <= 0:
                 raise serializers.ValidationError(
-                    'Число игредиентов должно быть больше 0')
+                    'Поле ингредиентов не может быть пустым!')
+            ingredients_list = []
+            for ingredient in ingredients:
+                ingredient_id = ingredient['id']
+                if ingredient_id in ingredients_list:
+                    raise serializers.ValidationError(
+                        'В рецепте не может быть повторяющихся ингредиентов')
+                ingredients_list.append(ingredient_id)
+                amount = ingredient['amount']
+                if int(amount) <= 0:
+                    raise serializers.ValidationError(
+                        'Число игредиентов должно быть больше 0')
         return data
 
     def validate_cooking_time(self, data):
@@ -112,7 +123,7 @@ class AddRecipeSerializer(serializers.ModelSerializer):
     def create_ingredients(ingredients, recipe):
         ingredient_list = [
             IngredientInRecipe(
-                ingredient=ingredient['id'],
+                ingredient=ingredient.get['id'],
                 recipe=recipe,
                 amount=ingredient['amount'],
             )
