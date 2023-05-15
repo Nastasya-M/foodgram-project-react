@@ -49,7 +49,7 @@ class RecipeSerializer(serializers.ModelSerializer):
     author = CustomUserSerializer(read_only=True)
     image = Base64ImageField()
     ingredients = IngredientInRecipeSerializer(
-        source='ingredient_recipe',
+        source='ingredients_recipe',
         many=True,
         read_only=True,)
     is_favorited = serializers.SerializerMethodField()
@@ -80,20 +80,12 @@ class AddRecipeSerializer(serializers.ModelSerializer):
                                               many=True)
     image = Base64ImageField()
     author = CustomUserSerializer(read_only=True)
-    name = serializers.CharField(max_length=200)
     cooking_time = serializers.IntegerField()
 
     class Meta:
         model = Recipe
         fields = ('id', 'ingredients', 'tags', 'author',
                   'name', 'text', 'cooking_time', 'image')
-        validators = [
-            serializers.UniqueTogetherValidator(
-                queryset=Recipe.objects.all(),
-                fields=('name', 'text'),
-                message='Такой рецепт уже существует'
-            )
-        ]
 
     def validate_ingredients(self, data):
         ingredients = self.initial_data.get('ingredients')
@@ -145,13 +137,9 @@ class AddRecipeSerializer(serializers.ModelSerializer):
         recipe.tags.set(tags)
         return super().update(recipe, validated_data)
 
-    def to_representation(self, instance):
-        recipe = super().to_representation(instance)
-        recipe['ingredients'] = IngredientInRecipeSerializer(
-            instance.ingredient_recipe.all(), many=True).data
-        recipe['tags'] = TagSerializer(
-            instance.tags.all(), many=True).data
-        return recipe
+    def to_representation(self, value):
+        serializer = RecipeSerializer(value, context=self.context)
+        return serializer.data
 
 
 class ShortRecipeSerializer(serializers.ModelSerializer):
@@ -183,10 +171,15 @@ class FavoriteSerializer(serializers.ModelSerializer):
 
 
 class ShoppingCartSerializer(serializers.ModelSerializer):
-    cooking_time = serializers.IntegerField(read_only=True,
-                                            source='recipe.cooking_time')
-    name = serializers.CharField(read_only=True, source='recipe.name')
-    image = serializers.ImageField(read_only=True, source='recipe.image')
+    cooking_time = serializers.IntegerField(
+        read_only=True,
+        source='recipe.cooking_time')
+    name = serializers.CharField(
+        read_only=True,
+        source='recipe.name')
+    image = serializers.ImageField(
+        read_only=True,
+        source='recipe.image')
 
     class Meta:
         model = ShoppingСart
