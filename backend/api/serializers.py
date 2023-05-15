@@ -80,12 +80,20 @@ class AddRecipeSerializer(serializers.ModelSerializer):
                                               many=True)
     image = Base64ImageField()
     author = CustomUserSerializer(read_only=True)
+    name = serializers.CharField(max_length=200)
     cooking_time = serializers.IntegerField()
 
     class Meta:
         model = Recipe
         fields = ('id', 'ingredients', 'tags', 'author',
                   'name', 'text', 'cooking_time', 'image')
+        validators = [
+            serializers.UniqueTogetherValidator(
+                queryset=Recipe.objects.all(),
+                fields=('name', 'text'),
+                message='Такой рецепт уже существует'
+            )
+        ]
 
     def validate_ingredients(self, data):
         ingredients = self.initial_data.get('ingredients')
