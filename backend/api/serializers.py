@@ -145,13 +145,9 @@ class AddRecipeSerializer(serializers.ModelSerializer):
         recipe.tags.set(tags)
         return super().update(recipe, validated_data)
 
-    def to_representation(self, instance):
-        recipe = super().to_representation(instance)
-        recipe['ingredients'] = IngredientInRecipeSerializer(
-            instance.ingredient_recipe.all(), many=True).data
-        recipe['tags'] = TagSerializer(
-            instance.tags.all(), many=True).data
-        return recipe
+    def to_representation(self, value):
+        serializer = RecipeSerializer(value, context=self.context)
+        return serializer.data
 
 
 class ShortRecipeSerializer(serializers.ModelSerializer):
