@@ -65,7 +65,7 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           passphrase: ${{ secrets.PASSPHRASE }}
           script: |
-            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/backend:latest
+            # sudo docker pull ${{ secrets.DOCKER_USERNAME }}/backend:latest
             sudo systemctl stop nginx
             sudo systemctl disable nginx
             sudo docker-compose stop

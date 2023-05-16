@@ -2,7 +2,7 @@
 
 [![Foodgram workflow](https://github.com/Nastasya-M/foodgram-project-react/actions/workflows/foodgram_workflow.yml/badge.svg)](https://github.com/Nastasya-M/foodgram-project-react/actions/workflows/foodgram_workflow.yml)
 
-### foodgram - это сервис, с помощбю которого пользователи смогут публиковать рецепты, подписываться на публикации других пользователей, добавлять понравившиеся рецепты в список «Избранное», а перед походом в магазин скачивать сводный список продуктов, необходимых для приготовления одного или нескольких выбранных блюд. 
+### foodgram - это сервис, с помощью которого пользователи смогут публиковать рецепты, подписываться на публикации других пользователей, добавлять понравившиеся рецепты в список «Избранное», а перед походом в магазин скачивать сводный список продуктов, необходимых для приготовления одного или нескольких выбранных блюд. 
 ```
 Для работы проекта был разработан и настроен CI/CD.
 ```
@@ -74,6 +74,7 @@ sudo docker-compose up -d
 sudo docker-compose exec web python manage.py migrate # примените миграции
 sudo docker-compose exec web python manage.py collectstatic --no-input # подгрузите статику
 sudo docker-compose exec web python manage.py createsuperuser # создайте суперпользователя
+sudo docker-compose exec web python manage.py import_ingredients # загрузите ингридиенты
 ```
 ### Ссылки для проверки сайта:
 
