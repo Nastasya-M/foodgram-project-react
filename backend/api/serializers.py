@@ -24,7 +24,7 @@ class IngredientSerializer(serializers.ModelSerializer):
 
 class IngredientInRecipeSerializer(serializers.ModelSerializer):
     id = serializers.PrimaryKeyRelatedField(
-        source='ingredient.id', queryset=IngredientInRecipe.objects.all())
+        queryset=IngredientInRecipe.objects.all())
     name = serializers.ReadOnlyField(source='ingredient.name')
     measurement_unit = serializers.ReadOnlyField(
         source='ingredient.measurement_unit'
@@ -145,9 +145,13 @@ class AddRecipeSerializer(serializers.ModelSerializer):
         recipe.tags.set(tags)
         return super().update(recipe, validated_data)
 
-    def to_representation(self, value):
-        serializer = RecipeSerializer(value, context=self.context)
-        return serializer.data
+    def to_representation(self, instance):
+        recipe = super().to_representation(instance)
+        recipe['ingredients'] = IngredientInRecipeSerializer(
+            instance.ingredient_recipe.all(), many=True).data
+        recipe['tags'] = TagSerializer(
+            instance.tags.all(), many=True).data
+        return recipe
 
 
 class ShortRecipeSerializer(serializers.ModelSerializer):
