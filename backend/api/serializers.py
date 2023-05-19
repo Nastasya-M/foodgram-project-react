@@ -1,9 +1,37 @@
 from drf_extra_fields.fields import Base64ImageField
+from djoser.serializers import UserCreateSerializer, UserSerializer
 from rest_framework import serializers
 
 from recipes.models import (Favorite, Ingredient, IngredientInRecipe, Recipe,
                             ShoppingСart, Tag)
-from users.serializers import CustomUserSerializer
+from users.models import Subscription, User
+
+
+class CustomUserSerializer(UserSerializer):
+    is_subscribed = serializers.SerializerMethodField()
+
+    class Meta:
+        model = User
+        fields = (
+            'email', 'id', 'username', 'first_name',
+            'last_name', 'is_subscribed'
+        )
+
+    def get_is_subscribed(self, obj):
+        user = self.context.get('request').user
+        if user.is_anonymous:
+            return False
+        return Subscription.objects.filter(user=user, author=obj.id).exists()
+
+
+class CustomUserCreateSerializer(UserCreateSerializer):
+
+    class Meta:
+        model = User
+        fields = (
+            'email', 'id', 'username', 'first_name',
+            'last_name', 'password'
+        )
 
 
 class TagSerializer(serializers.ModelSerializer):
@@ -196,3 +224,32 @@ class ShoppingCartSerializer(serializers.ModelSerializer):
     class Meta:
         model = ShoppingСart
         fields = ('id', 'name', 'image', 'cooking_time')
+
+
+class RecipeForUserSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Recipe
+        fields = ('id', 'name', 'image', 'cooking_time')
+
+
+class SubscriptionSerializer(CustomUserSerializer):
+    recipes = serializers.SerializerMethodField(read_only=True)
+    recipes_count = serializers.SerializerMethodField(read_only=True)
+
+    class Meta:
+        model = User
+        fields = ('email', 'id', 'username', 'first_name', 'last_name',
+                  'is_subscribed', 'recipes', 'recipes_count')
+
+    @staticmethod
+    def get_recipes_count(obj):
+        return obj.recipes.count()
+
+    def get_recipes(self, obj):
+        request = self.context.get('request')
+        recipes = obj.recipes.all()
+        recipes_limit = request.query_params.get('recipes_limit')
+        if recipes_limit:
+            recipes = recipes[:int(recipes_limit)]
+        return RecipeForUserSerializer(recipes, many=True).data
