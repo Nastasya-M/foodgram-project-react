@@ -192,38 +192,27 @@ class ShortRecipeSerializer(serializers.ModelSerializer):
 
 
 class FavoriteSerializer(serializers.ModelSerializer):
-    name = serializers.ReadOnlyField(
-        source='recipe.name',
-        read_only=True)
-    image = serializers.ImageField(
-        source='recipe.image',
-        read_only=True)
-    coocking_time = serializers.IntegerField(
-        source='recipe.cooking_time',
-        read_only=True)
-    id = serializers.PrimaryKeyRelatedField(
-        source='recipe.id',
-        read_only=True)
 
     class Meta:
         model = Favorite
-        fields = ('id', 'name', 'image', 'coocking_time')
+        fields = ('user', 'recipe')
+
+    def validate(self, data):
+        user, recipe = data.get('user'), data.get('recipe')
+        if self.Meta.model.objects.filter(user=user, recipe=recipe).exists():
+            raise serializers.ValidationError('Рецепт уже в избранном!')
+        return data
+
+    def to_representation(self, instance):
+        request = self.context.get('request')
+        context = {'request': request}
+        return ShortRecipeSerializer(instance.recipe, context=context).data
 
 
-class ShoppingCartSerializer(serializers.ModelSerializer):
-    cooking_time = serializers.IntegerField(
-        read_only=True,
-        source='recipe.cooking_time')
-    name = serializers.CharField(
-        read_only=True,
-        source='recipe.name')
-    image = serializers.ImageField(
-        read_only=True,
-        source='recipe.image')
+class ShoppingCartSerializer(FavoriteSerializer):
 
-    class Meta:
+    class Meta(FavoriteSerializer.Meta):
         model = ShoppingСart
-        fields = ('id', 'name', 'image', 'cooking_time')
 
 
 class RecipeForUserSerializer(serializers.ModelSerializer):

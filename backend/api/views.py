@@ -16,8 +16,7 @@ from api.serializers import (AddRecipeSerializer, CustomUserSerializer,
                              FavoriteSerializer, IngredientSerializer,
                              RecipeSerializer, ShoppingCartSerializer,
                              SubscriptionSerializer, TagSerializer)
-from recipes.models import (Favorite, Ingredient, IngredientInRecipe, Recipe,
-                            ShoppingСart, Tag)
+from recipes.models import (Ingredient, IngredientInRecipe, Recipe, Tag)
 from users.models import Subscription, User
 
 
@@ -52,42 +51,35 @@ class RecipeViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
 
-    @staticmethod
-    def favorite_and_shopping_cart_add(model, user, recipe):
-        model_create, create = model.objects.get_or_create(
+    def recipe_post_delete(self, pk, serializer_class):
+        user = self.request.user
+        recipe = get_object_or_404(Recipe, pk=pk)
+        model_obj = serializer_class.Meta.model.objects.filter(
             user=user, recipe=recipe
         )
-        if create:
-            if str(model) == 'Favorite':
-                serializer = FavoriteSerializer()
-            else:
-                serializer = ShoppingCartSerializer()
-        return Response(
-            serializer.to_representation(instance=model_create),
-            status=status.HTTP_201_CREATED
-        )
 
-    @staticmethod
-    def favorite_and_shopping_cart_delete(model, user, recipe):
-        model.objects.filter(recipe=recipe, user=user).delete()
+        if self.request.method == 'POST':
+            serializer = serializer_class(
+                data={'user': user.id, 'recipe': pk},
+                context={'request': self.request}
+            )
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+        if self.request.method == 'DELETE':
+            if not model_obj.exists():
+                return Response(status=status.HTTP_400_BAD_REQUEST)
+        model_obj.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @action(
         methods=['POST', 'DELETE'],
         detail=True,
-        filter_backends=DjangoFilterBackend,
-        filterset_class=RecipesFilter
+        permission_classes=(IsAuthenticated,)
     )
-    def favorite(self, request, pk):
-        user = request.user
-        recipe = get_object_or_404(Recipe, pk=pk)
-        if request.method == 'POST':
-            return self.favorite_and_shopping_cart_add(
-                Favorite, user, recipe)
-        if request.method == 'DELETE':
-            return self.favorite_and_shopping_cart_delete(
-                Favorite, user, recipe)
-        return Response(status=status.HTTP_400_BAD_REQUEST)
+    def favorite(self, request, pk=None):
+        return self.recipe_post_delete(pk, FavoriteSerializer)
 
     @action(
         methods=['POST', 'DELETE'],
@@ -95,15 +87,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         permission_classes=(IsAuthenticated,)
     )
     def shopping_cart(self, request, pk=None):
-        user = request.user
-        recipe = get_object_or_404(Recipe, pk=pk)
-        if request.method == 'POST':
-            return self.favorite_and_shopping_cart_add(
-                ShoppingСart, user, recipe)
-        if request.method == 'DELETE':
-            return self.favorite_and_shopping_cart_delete(
-                ShoppingСart, user, recipe)
-        return Response(status=status.HTTP_400_BAD_REQUEST)
+        return self.recipe_post_delete(pk, ShoppingCartSerializer)
 
     @action(
         detail=False,
